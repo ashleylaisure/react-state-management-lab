@@ -6,7 +6,7 @@ function App() {
   
   const [team, setTeam] = useState([]);
   const [money, setMoney] = useState(100);
-  const [strength, setStrength] = useState(0);
+  const [noMoney, setNoMoney] = useState(false);
   const [zombieFighters, setZombieFighters] = useState([
     
       {
@@ -93,17 +93,25 @@ function App() {
     
   ]);
 
-  
+  const totalStrength = team.reduce((accumulator, fighter) => {
+    return accumulator += fighter.price
+  }, 0)
+
+  const totalAgility = team.reduce((accumulator, fighter) => {
+    return accumulator += fighter.agility
+  }, 0)
 
   const handleAddFighter = (fighter) => {
 
     if (fighter.price > money) {
+      setNoMoney(true);
       return console.log("not enough money")
+      
     } else {
       setTeam([...team, fighter]);
       setMoney(money - fighter.price);
       removeFighter(fighter.id);
-      setStrength(strength + fighter.strength)
+      setNoMoney(false);
     }
 
   };
@@ -119,15 +127,20 @@ function App() {
     setTeam(newTeam);
     setZombieFighters([...zombieFighters, removefighter]);
     setMoney(money + removefighter.price);
+    setNoMoney(false);
   }
 
   
+
   return (
     <>
       <h1>Zombie Fighters</h1>
-      <p>Money: {money}</p>
+      <p>Money: {money} <span>{noMoney ? "Not Enough Money" : ''}</span> </p> 
 
-      <p>Team Strength: {strength}</p>
+      <p>Team Strength: {totalStrength}</p>
+
+      <p>Teams Agility: {totalAgility}</p>
+
       <h3>My Team:</h3>
       <p>{team.length === 0 ? 'Pick some team members!' : ''} </p>
 
@@ -146,7 +159,8 @@ function App() {
 
         ))}
       </ul>
-      <h3>Fighters:</h3>
+      <h3>Fighters:</h3> 
+      
       <ul>
         {zombieFighters.map((zombie) => (
   
